@@ -6,6 +6,11 @@ import sys
 import time
 
 def main():
+    # print info about me :)
+    print("Andrew Downing")
+    print("website: http://andrewd.50webs.com")
+    print("github: ad510")
+    print()
     # find twitter usernames
     twitterUsers = set(findbetween(gethttp("twitter.com", "/search?q=%23PennApps", True), "data-screen-name=\"", "\""))
     for twitterUser in twitterUsers:
