@@ -34,18 +34,23 @@ def main():
         if len(domains) > 0:
             print("website: " + str(domains))
         # find github accounts
-        """html = ""
-        try:
-            html = gethttp("duckduckgo.com", "/html/?q=site:github.com " + name, True)
-        except:
-            print("error searching 'site:github.com " + name + "'")
-        for url in findlinks(html):
-            if url.find("https://github.com/") != -1 and url.count("/") == 3:
-                githubUsers.add(url.split("github.com/")[1].split("/")[0])
-        time.sleep(2)"""
-        for url in findlinks(gethttp("www.google.com", "/search?q=site:github.com+" + name.replace(" ", "+"), True)):
-            if url.startswith("/url?q=https://github.com/") and url.count("/") == 4:
-                 githubUsers.add(findbetween(url, "/url?q=https://github.com/", "&")[0].split("%")[0])
+        if "--duckduckgo" in sys.argv:
+            # duckduckgo
+            html = ""
+            try:
+                html = gethttp("duckduckgo.com", "/html/?q=site:github.com " + name, True)
+            except:
+                print("error searching 'site:github.com " + name + "'")
+            for url in findlinks(html):
+                if url.find("https://github.com/") != -1 and url.count("/") == 3:
+                    githubUsers.add(url.split("github.com/")[1].split("/")[0])
+            time.sleep(2)
+        else:
+            # google
+            for url in findlinks(gethttp("www.google.com", "/search?q=site:github.com+" + name.replace(" ", "+"), True)):
+                if url.startswith("/url?q=https://github.com/") and url.count("/") == 4:
+                    githubUsers.add(findbetween(url, "/url?q=https://github.com/", "&")[0].split("%")[0])
+        # find in website
         for domain in domains:
             for url in findlinks(gethttpsmart(domain)):
                 if (url.find("github.com/") != -1):
