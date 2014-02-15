@@ -65,7 +65,7 @@ def gethttp(domain, url, https):
     conn = http.client.HTTPSConnection(domain) if https else http.client.HTTPConnection(domain)
     conn.request("GET", url)
     r1 = conn.getresponse()
-    if r1.status == 301 or r1.status == 302:
+    if (r1.status == 301 or r1.status == 302) and url != "/sorry":
         return gethttpsmart(r1.getheader("Location")) # got a "moved permanently" error
     elif r1.status != 200:
         print("non-normal status connecting to", domain, url, r1.status, r1.reason)
