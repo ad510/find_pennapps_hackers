@@ -27,7 +27,7 @@ def main():
         # find website domains
         for url in findurls(html):
             url2 = url[:len(url) - 1] if url.endswith("/") else url
-            if url2.find("twitter.com") == -1 and url2.find("twimg.com") == -1 and (url2.endswith(".com") or url2.endswith(".org") or url.endswith(".net")):
+            if url2.find("twitter.com") == -1 and url2.find("twimg.com") == -1 and (url2.endswith(".com") or url2.endswith(".org") or url2.endswith(".net")):
                 domains.add(url2)
             elif url.find("github.com") != -1:
                 githubUsers.add(url)
