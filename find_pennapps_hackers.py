@@ -6,32 +6,30 @@ import sys
 import time
 
 def main():
-    # find twitter names and usernames
+    # find twitter usernames
     twitterUsers = set(findbetween(gethttp("twitter.com", "/search?q=%23PennApps", True), "data-screen-name=\"", "\""))
-    print(twitterUsers)
-    # find real names and website domains
-    names = set()
-    domains = set()
-    githubUsers = set()
     for twitterUser in twitterUsers:
-        sys.stdout.write(".")
-        sys.stdout.flush()
+        name = ""
+        domains = set()
+        githubUsers = set()
         html = gethttp("twitter.com", "/" + twitterUser, True)
+        # find real name
         nameFields = findbetween(html, "<span class=\"profile-field\">", "</span>")
         if len(nameFields) > 0:
-            names.add(nameFields[0])
+            name = nameFields[0]
+            print(name)
+        print("twitter: " + twitterUser)
+        # find website domains
         for url in findurls(html):
             url2 = url[:len(url) - 1] if url.endswith("/") else url
             if url2.find("twitter.com") == -1 and url2.find("twimg.com") == -1 and (url2.endswith(".com") or url2.endswith(".org") or url.endswith(".net")):
                 domains.add(url2)
             elif url.find("github.com") != -1:
                 githubUsers.add(url)
-    print()
-    print(names)
-    print(domains)
-    # find github accounts
-    """for name in names:
-        html = ""
+        if len(domains) > 0:
+            print("website: " + str(domains))
+        # find github accounts
+        """html = ""
         try:
             html = gethttp("duckduckgo.com", "/html/?q=site:github.com " + name, True)
         except:
@@ -40,22 +38,16 @@ def main():
             if url.find("https://github.com/") != -1 and url.count("/") == 3:
                 githubUsers.add(url)
         time.sleep(2)"""
-    for name in names:
         for url in findlinks(gethttp("www.google.com", "/search?q=site:github.com+" + name.replace(" ", "+"), True)):
             if url.startswith("/url?q=https://github.com/") and url.count("/") == 4:
                  githubUsers.add(findbetween(url, "/url?q=https://github.com/", "&")[0].split("%")[0])
-        sys.stdout.write(".")
-        sys.stdout.flush()
-    print()
-    for domain in domains:
-        html = gethttpsmart(domain)
-        for url in findlinks(html):
-            if (url.find("github.com/") != -1):
-                githubUsers.add(url.split("github.com/")[1].split("/")[0])
-        sys.stdout.write(".")
-        sys.stdout.flush()
-    print()
-    print(githubUsers)
+        for domain in domains:
+            for url in findlinks(gethttpsmart(domain)):
+                if (url.find("github.com/") != -1):
+                    githubUsers.add(url.split("github.com/")[1].split("/")[0])
+        if len(githubUsers) > 0:
+            print("github: " + str(githubUsers))
+        print()
 
 def gethttpsmart(url):
     minusProtocol = url[url.find("//") + 2 : ]
